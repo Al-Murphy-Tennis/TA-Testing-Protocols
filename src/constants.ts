@@ -57,7 +57,7 @@ export const PROTOCOLS: MajorTab[] = [
           }
         ],
         showImagePlaceholder: true,
-        imagePath: '/Warm-Up.jpg',
+        imagePath: '/TA-Testing-Protocols/Warm-Up.jpg',
         scoring: 'Follow the Warm-Up Protocol above. Click the image to expand and download.'
       }
     ]
@@ -71,7 +71,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: 'Squat Jump Test (SJ)',
         description: 'Isolates purely concentric power by removing the "elastic bounce" of the stretch-shortening cycle (SSC).',
         showImagePlaceholder: true,
-        imagePath: ['/SJ.jpg', '/SJ_trace.jpg'],
+        imagePath: ['/TA-Testing-Protocols/SJ.jpg', '/TA-Testing-Protocols/SJ_trace.jpg'],
         procedure: [
           {
             title: 'Forcedecks System Setup',
@@ -97,7 +97,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: 'Countermovement Jump (CMJ)',
         description: 'Measures explosive lower-body power and efficiency in transferring energy from braking to propulsion.',
         showImagePlaceholder: true,
-        imagePath: ['/CMJ.jpg', '/CMJ_trace.jpg'],
+        imagePath: ['/TA-Testing-Protocols/CMJ.jpg', '/TA-Testing-Protocols/CMJ_trace.jpg'],
         procedure: [
           {
             title: 'Forcedecks System Setup',
@@ -122,7 +122,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: 'Repeated Hop Test (12/5 RHT)',
         description: 'Assesses reactive strength and ankle stiffness.',
         showImagePlaceholder: true,
-        imagePath: ['/DL_Hop.jpg', '/DL_hop_trace.jpg'],
+        imagePath: ['/TA-Testing-Protocols/DL_Hop.jpg', '/TA-Testing-Protocols/DL_hop_trace.jpg'],
         procedure: [
           {
             title: 'Forcedecks System Setup',
@@ -144,7 +144,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: 'Drop Jump Test (DJ)',
         description: 'Assesses the transition from landing to take-off (Fast SSC efficiency).',
         showImagePlaceholder: true,
-        imagePath: ['/Drop_jump.jpeg', '/Drop_jump_trace.jpeg'],
+        imagePath: ['/TA-Testing-Protocols/Drop_jump.jpeg', '/TA-Testing-Protocols/Drop_jump_trace.jpeg'],
         procedure: [
           {
             title: 'Box Height Profiling (Initial Assessment)',
@@ -174,7 +174,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: 'Isometric Mid-Thigh Pull (IMTP)',
         description: 'Measures maximal whole-body strength using an immovable bar.',
         showImagePlaceholder: true,
-        imagePath: ['/IMTP.jpg', '/IMTP_trace.jpg'],
+        imagePath: ['/TA-Testing-Protocols/IMTP.jpg', '/TA-Testing-Protocols/IMTP_trace.jpg'],
         warmup: 'BB Jump Shrugs x 8, 1 pull @ 60% effort, 1 pull @ 80% effort.',
         procedure: [
           'Set bar to mid-thigh height (120-135° knee angle).',
@@ -199,7 +199,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: 'Isometric Belt Squat (Belt Squat)',
         description: 'Sport-specific maximal strength drive against a hip belt.',
         showImagePlaceholder: true,
-        imagePath: ['/Belt.jpg', '/Belt_trace.jpg'],
+        imagePath: ['/TA-Testing-Protocols/Belt.jpg', '/TA-Testing-Protocols/Belt_trace.jpg'],
         warmup: '1 pull @ 60% effort, 1 pull @ 80% effort.',
         procedure: [
           'Attach belt around hips at 120-135° knee angle.',
@@ -223,7 +223,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: 'Ankle Push',
         description: 'Isolates plantarflexor force production capacity.',
         showImagePlaceholder: true,
-        imagePath: ['/Ankle.jpg', '/Ankle_trace.jpg'],
+        imagePath: ['/TA-Testing-Protocols/Ankle.jpg', '/TA-Testing-Protocols/Ankle_trace.jpg'],
         warmup: '1 push @ 60%, 1 push @ 80% effort.',
         procedure: [
           {
@@ -262,7 +262,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: 'Hip Add/Abd',
         description: 'Assessment of groin and glute strength/symmetry.',
         showImagePlaceholder: true,
-        imagePath: ['/AbAd.jpg', '/AbAd_trace.jpg'],
+        imagePath: ['/TA-Testing-Protocols/AbAd.jpg', '/TA-Testing-Protocols/AbAd_trace.jpg'],
         warmup: 'ForceFrame Warm-Up: 3 x3sec @ 50%, 75% and 90-95% (near max) each side.',
         procedure: [
           'Crossbar Rotation set to 180 degrees.',
@@ -294,7 +294,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: 'Hip Flexion',
         description: 'Assessment of hip flexion strength and symmetry.',
         showImagePlaceholder: true,
-        imagePath: ['/Hipflexion.jpg', '/Hipflexion_trace.jpg'],
+        imagePath: ['/TA-Testing-Protocols/Hipflexion.jpg', '/TA-Testing-Protocols/Hipflexion_trace.jpg'],
         warmup: 'ForceFrame Warm-Up: 3 x3sec @ 50%, 75% and 90-95% (near max) each side.',
         procedure: [
           'Crossbar Rotation set to 180 degrees.',
@@ -326,7 +326,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: 'Hip Extension',
         description: 'Assessment of hip extension strength and symmetry.',
         showImagePlaceholder: true,
-        imagePath: ['/HipExt.jpg', '/HipExt_trace.jpg'],
+        imagePath: ['/TA-Testing-Protocols/HipExt.jpg', '/TA-Testing-Protocols/HipExt_trace.jpg'],
         warmup: 'ForceFrame Warm-Up: 3 x3sec @ 50%, 75% and 90-95% (near max) each side.',
         procedure: [
           'Crossbar Rotation set to 180 degrees.',
@@ -357,7 +357,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: 'Shoulder IR/ER',
         description: 'Shoulder internal and external strength (and serving arm symmetry).',
         showImagePlaceholder: true,
-        imagePath: ['/Shoulder.jpg', '/Shoulder_trace.jpg'],
+        imagePath: ['/TA-Testing-Protocols/Shoulder.jpg', '/TA-Testing-Protocols/Shoulder_trace.jpg'],
         warmup: '- Shoulder wall slides x 10, SA Band Chest Press x 10, Band Pull Apart x 12, Band ER/IR @ 90° abduction x 8.\n- ForceFrame Warm-Up: 3 x3sec @ 50%, 75% and 90-95% (near max) each side.',
         procedure: [
           'Crossbar Rotation set to 90 degrees.',
@@ -395,7 +395,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: 'Speed & Acceleration (5m/10m)',
         description: 'Measures explosive horizontal force and maximal acceleration.',
         showImagePlaceholder: true,
-        imagePath: ['/Accel.jpg'],
+        imagePath: ['/TA-Testing-Protocols/Accel.jpg'],
         warmup: '- Ensure the testing warm up has been completed\n- 2 x 10m accelerations @ 75% and 85%.',
         procedure: [
           'SmartSpeed Timing gates set at 0m, 5m, and 10m.',
@@ -412,7 +412,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: '10-0-5m COD',
         description: 'Assessment of braking and re-acceleration capacity.',
         showImagePlaceholder: true,
-        imagePath: ['/COD.jpg'],
+        imagePath: ['/TA-Testing-Protocols/COD.jpg'],
         warmup: '- Ensure the testing warm up has been completed\n- 2 x 10-0-5m (1 x left, 1 x right turn) @ 75% and 85%.',
         procedure: [
           'SmartSpeed Timing gates set at 0m, 5m and 10m. ~1.5m lane width. >10m run off past final gate.',
@@ -431,7 +431,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: 'Yo-yo Level 1',
         description: 'Assessment of high-intensity intermittent aerobic capacity.',
         showImagePlaceholder: true,
-        imagePath: ['/Yoyo.jpg'],
+        imagePath: ['/TA-Testing-Protocols/Yoyo.jpg'],
         procedure: [
           '2x20m shuttle runs synced to audio.',
           '10s active recovery (5m walk and back).',
@@ -445,7 +445,7 @@ export const PROTOCOLS: MajorTab[] = [
         title: 'Vertical Jump (Vertec)',
         description: 'Field test for assessing lower body explosive power.',
         showImagePlaceholder: true,
-        imagePath: ['/vertec.jpg'],
+        imagePath: ['/TA-Testing-Protocols/vertec.jpg'],
         procedure: [
           'Determine standing reach height by standing under the vanes and reaching, with shoulder elevation, the highest vane possible with feet flat on the ground.',
           'Jump from static start (no step), landing in approximately the same position as take off.',
