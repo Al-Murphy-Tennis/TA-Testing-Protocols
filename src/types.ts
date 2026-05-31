@@ -17,9 +17,15 @@ export interface TestProtocol {
   imagePath?: string | string[];
 }
 
+export interface TabGroup {
+  id: string;
+  label: string;
+  subTabs: TestProtocol[];
+}
+
 export interface MajorTab {
   id: string;
   label: string;
   icon?: string;
-  subTabs: TestProtocol[];
+  groups: TabGroup[];
 }

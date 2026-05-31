@@ -17,14 +17,18 @@ import {
   CheckCircle2,
   AlertCircle,
   X,
-  Download
+  Download,
+  Star,
+  Target,
+  Lightbulb
 } from 'lucide-react';
 import { PROTOCOLS, COLORS } from './constants';
 import { MajorTab, TestProtocol } from './types';
 
 export default function App() {
   const [activeMajorTabId, setActiveMajorTabId] = useState(PROTOCOLS[0].id);
-  const [activeSubTabId, setActiveSubTabId] = useState(PROTOCOLS[0].subTabs[0].id);
+  const [activeGroupId, setActiveGroupId] = useState(PROTOCOLS[0].groups[0].id);
+  const [activeSubTabId, setActiveSubTabId] = useState(PROTOCOLS[0].groups[0].subTabs[0].id);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const handleDownload = (imageUrl: string, filename: string) => {
@@ -40,15 +44,31 @@ export default function App() {
     PROTOCOLS.find(t => t.id === activeMajorTabId) || PROTOCOLS[0]
   , [activeMajorTabId]);
 
+  const activeGroup = useMemo(() => 
+    activeMajorTab.groups.find(g => g.id === activeGroupId) || activeMajorTab.groups[0]
+  , [activeMajorTab, activeGroupId]);
+
   const activeSubTab = useMemo(() => 
-    activeMajorTab.subTabs.find(t => t.id === activeSubTabId) || activeMajorTab.subTabs[0]
-  , [activeMajorTab, activeSubTabId]);
+    activeGroup.subTabs.find(t => t.id === activeSubTabId) || activeGroup.subTabs[0]
+  , [activeGroup, activeSubTabId]);
 
   const handleMajorTabChange = (id: string) => {
     setActiveMajorTabId(id);
-    const firstSubTab = PROTOCOLS.find(t => t.id === id)?.subTabs[0];
-    if (firstSubTab) {
-      setActiveSubTabId(firstSubTab.id);
+    const majorTab = PROTOCOLS.find(t => t.id === id);
+    if (majorTab) {
+      const firstGroup = majorTab.groups[0];
+      setActiveGroupId(firstGroup.id);
+      if (firstGroup.subTabs.length > 0) {
+        setActiveSubTabId(firstGroup.subTabs[0].id);
+      }
+    }
+  };
+
+  const handleGroupChange = (id: string) => {
+    setActiveGroupId(id);
+    const group = activeMajorTab.groups.find(g => g.id === id);
+    if (group && group.subTabs.length > 0) {
+      setActiveSubTabId(group.subTabs[0].id);
     }
   };
 
@@ -79,7 +99,7 @@ export default function App() {
           ))}
         </nav>
 
-        {/* Mobile Major Nav (Simple Dropdown feel) */}
+        {/* Mobile Major Nav Icon */}
         <div className="lg:hidden">
           <Activity className="text-[#7BFF00]" size={24} />
         </div>
@@ -101,24 +121,50 @@ export default function App() {
         ))}
       </nav>
 
-      {/* Sub-Navigation Bar */}
-      <nav className="h-14 bg-white border-b border-gray-200 flex items-center px-4 md:px-10 gap-2 overflow-x-auto scroller-hide z-10 shrink-0">
-        {activeMajorTab.subTabs.map((subTab) => (
-          <button
-            key={subTab.id}
-            onClick={() => setActiveSubTabId(subTab.id)}
-            className={`
-              px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider whitespace-nowrap transition-colors
-              ${activeSubTabId === subTab.id
-                ? 'bg-[#0070FF] text-white'
-                : 'hover:bg-gray-100 text-gray-400'
-              }
-            `}
-          >
-            {subTab.title.includes('(') ? subTab.title.match(/\(([^)]+)\)/)?.[1] || subTab.title : subTab.title}
-          </button>
-        ))}
-      </nav>
+      {/* Group Navigation (Middle Hierarchy) */}
+      {activeMajorTab.groups.length > 1 || activeMajorTab.id !== 'background' ? (
+        <nav className="h-14 bg-[#003A85] border-b border-[#0070FF]/20 flex items-center px-4 md:px-10 gap-x-8 overflow-x-auto scroller-hide shrink-0">
+          {activeMajorTab.groups.map((group) => (
+            <button
+              key={group.id}
+              onClick={() => handleGroupChange(group.id)}
+              className={`
+                text-[10px] md:text-xs font-black uppercase tracking-[0.2em] whitespace-nowrap transition-all flex flex-col relative py-2
+                ${activeGroupId === group.id ? 'text-[#7BFF00]' : 'text-white/60 hover:text-white'}
+              `}
+            >
+              {group.label}
+              {activeGroupId === group.id && (
+                <motion.div 
+                  layoutId="activeGroupUnderline"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[#7BFF00]" 
+                />
+              )}
+            </button>
+          ))}
+        </nav>
+      ) : null}
+
+      {/* Sub-Navigation Bar (Tests) */}
+      {activeGroup.subTabs.length > 0 && (
+        <nav className="h-14 bg-white border-b border-gray-200 flex items-center px-4 md:px-10 gap-2 overflow-x-auto scroller-hide z-10 shrink-0">
+          {activeGroup.subTabs.map((subTab) => (
+            <button
+              key={subTab.id}
+              onClick={() => setActiveSubTabId(subTab.id)}
+              className={`
+                px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider whitespace-nowrap transition-colors
+                ${activeSubTabId === subTab.id
+                  ? 'bg-[#0070FF] text-white'
+                  : 'hover:bg-gray-100 text-gray-400'
+                }
+              `}
+            >
+              {subTab.title.includes('(') ? subTab.title.match(/\(([^)]+)\)/)?.[1] || subTab.title : subTab.title}
+            </button>
+          ))}
+        </nav>
+      )}
 
       {/* Main Content Stage */}
       <main className="flex-1 flex flex-col overflow-y-auto bg-white">
@@ -185,46 +231,162 @@ export default function App() {
                     {activeSubTab.id === 'overview' ? 'Benefits of Performance Testing' : 'Execution Steps'}
                     <div className="h-px bg-[#0070FF]/20 flex-1" />
                   </h3>
-                  <div className="grid gap-6 md:gap-8">
-                    {activeSubTab.procedure.map((step, idx) => (
-                      <div key={idx} className="group flex gap-6 md:gap-10 border-b border-slate-100 pb-6 md:pb-8 last:border-0">
-                        <span className="text-slate-200 font-serif italic text-4xl md:text-6xl leading-none group-hover:text-[#7BFF00] transition-all duration-300 transform group-hover:scale-110">
-                          {String(idx + 1).padStart(2, '0')}
-                        </span>
-                        <div className="flex flex-col justify-center gap-2">
-                           {typeof step === 'string' ? (
-                             <p className="text-lg md:text-xl lg:text-2xl font-bold text-slate-900 leading-tight">
-                               {step}
-                             </p>
-                           ) : (
-                             <>
-                               <p className="text-lg md:text-xl lg:text-2xl font-bold text-slate-900 leading-tight">
-                                 {step.title}
-                               </p>
-                               <div className="flex flex-col gap-2 mt-1">
-                                 {Array.isArray(step.subtitle) ? (
-                                   step.subtitle.map((sub, i) => (
-                                     <div key={i} className="flex gap-2 items-start">
-                                       <div className="w-1.5 h-1.5 rounded-full bg-[#7BFF00] mt-1.5 shrink-0" />
-                                       <p className="text-xs md:text-sm font-bold text-slate-500 uppercase tracking-wide">
-                                         {sub}
-                                       </p>
-                                     </div>
-                                   ))
-                                 ) : (
-                                   <div className="flex gap-2 items-start">
-                                     <div className="w-1.5 h-1.5 rounded-full bg-[#7BFF00] mt-1.5 shrink-0" />
-                                     <p className="text-xs md:text-sm font-bold text-slate-500 uppercase tracking-wide">
-                                       {step.subtitle}
-                                     </p>
+                  <div className={activeMajorTab.id === 'interpret' ? "flex flex-col gap-6" : "grid gap-6 md:gap-8"}>
+                    {activeSubTab.procedure.map((step, idx) => {
+                      const isInterpret = activeMajorTab.id === 'interpret';
+                      const titleStr = typeof step !== 'string' ? step.title.toLowerCase() : '';
+                      const isTennis = titleStr.includes('tennis');
+                      const isGoodJump = titleStr.includes('good') || titleStr.includes('how to use');
+
+                      // Parse structured metric data
+                      const subtitles = typeof step !== 'string' ? (Array.isArray(step.subtitle) ? step.subtitle : [step.subtitle]) : [];
+                      
+                      const metricData = {
+                        means: subtitles.find(s => s.startsWith('WHAT IT MEANS:'))?.replace('WHAT IT MEANS:', '').trim(),
+                        matters: subtitles.find(s => s.startsWith('WHY IT MATTERS:'))?.replace('WHY IT MATTERS:', '').trim(),
+                        attribute: subtitles.find(s => s.startsWith('STRENGTH ATTRIBUTE:'))?.replace('STRENGTH ATTRIBUTE:', '').trim(),
+                        priority: subtitles.find(s => s.startsWith('PRIORITY:'))?.replace('PRIORITY:', '').trim(),
+                      };
+
+                      const isMetricRow = !!metricData.means || !!metricData.matters;
+                      const isPrimary = metricData.priority === 'PRIMARY' || titleStr.includes('primary');
+                      const isSecondary = metricData.priority === 'SECONDARY' || titleStr.includes('secondary');
+                      const isExploratory = metricData.priority === 'EXPLORATORY' || titleStr.includes('exploratory');
+
+                      const getStyles = () => {
+                        if (isPrimary) return 'bg-white border-slate-200';
+                        if (isSecondary) return 'bg-slate-50 border-slate-200';
+                        if (isExploratory) return 'bg-blue-50/30 border-blue-100';
+                        if (isTennis) return 'bg-[#7BFF00]/5 border-[#7BFF00]/20';
+                        if (isGoodJump) return 'bg-white border-2 border-emerald-500 shadow-xl shadow-emerald-500/10';
+                        return 'bg-slate-50/50 border-slate-100';
+                      };
+
+                      return (
+                        <div 
+                          key={idx} 
+                          className={`
+                            group flex flex-col gap-4 pb-6 md:pb-8 last:border-0 p-6 md:p-8 rounded-[2rem] border transition-all duration-300
+                            ${isInterpret ? getStyles() : 'border-transparent border-b-slate-100 rounded-none p-0 last:pb-0'}
+                            ${(isGoodJump || isTennis) && 'md:max-w-4xl mx-auto w-full'}
+                          `}
+                        >
+                          {!isInterpret && (
+                            <div className="flex gap-6 items-start">
+                              <span className="text-slate-200 font-serif italic text-4xl md:text-6xl leading-none group-hover:text-[#7BFF00] transition-all duration-300 transform group-hover:scale-110 shrink-0">
+                                {String(idx + 1).padStart(2, '0')}
+                              </span>
+                              <div className="flex flex-col gap-2">
+                                <p className="text-xl md:text-2xl font-black text-slate-900 leading-tight uppercase">
+                                  {typeof step === 'string' ? step : step.title}
+                                </p>
+                                {typeof step !== 'string' && step.subtitle && (
+                                   <div className="flex flex-col gap-2">
+                                     {Array.isArray(step.subtitle) ? step.subtitle.map((s, i) => (
+                                       <div key={i} className="flex gap-3 items-start">
+                                          <div className="w-2 h-2 rounded-full bg-[#7BFF00] mt-1.5" />
+                                          <p className="text-sm text-slate-600 font-bold uppercase tracking-wider">{s}</p>
+                                       </div>
+                                     )) : (
+                                       <div className="flex gap-3 items-start">
+                                          <div className="w-2 h-2 rounded-full bg-[#7BFF00] mt-1.5" />
+                                          <p className="text-sm text-slate-600 font-bold uppercase tracking-wider">{step.subtitle}</p>
+                                       </div>
+                                     )}
                                    </div>
-                                 )}
-                               </div>
-                             </>
-                           )}
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {isInterpret && (
+                            <>
+                              <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
+                                <div className="flex items-center gap-4">
+                                  {isMetricRow && (
+                                    <div className={`
+                                      px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase
+                                      ${isPrimary ? 'bg-black text-[#7BFF00]' : isExploratory ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'}
+                                    `}>
+                                      {metricData.priority}
+                                    </div>
+                                  )}
+                                  <h4 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase">
+                                    {typeof step === 'string' ? step : step.title}
+                                  </h4>
+                                </div>
+                                {metricData.attribute && (
+                                  <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 border border-blue-100">
+                                    <Target size={16} className="text-blue-600" />
+                                    <span className="text-[11px] font-black text-blue-600 uppercase tracking-wider">
+                                       {metricData.attribute}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+
+                              {isMetricRow ? (
+                                <div className="grid md:grid-cols-2 gap-8 mt-4 pt-6 border-t border-slate-100">
+                                  <div className="space-y-4">
+                                    <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                                      <div className="w-4 h-px bg-slate-200" />
+                                      What it means
+                                    </h5>
+                                    <div>
+                                      {(() => {
+                                        const sentences = (metricData.means || "").split(". ").filter(s => s.trim().length > 0);
+                                        return (
+                                          <div className="flex flex-col gap-3">
+                                            <p className="text-sm md:text-base font-bold text-slate-900 leading-snug uppercase">
+                                              {sentences[0]}{sentences[0].endsWith('.') ? '' : '.'}
+                                            </p>
+                                            {sentences.slice(1).map((s, i) => (
+                                              <div key={i} className="flex gap-2 items-start pl-4 group/sub">
+                                                <div className="w-1 h-1 rounded-full bg-slate-300 mt-2 group-hover/sub:bg-[#7BFF00] transition-colors" />
+                                                <p className="text-xs md:text-sm font-bold text-slate-500 uppercase leading-normal tracking-wide">
+                                                  {s}{s.endsWith('.') ? '' : '.'}
+                                                </p>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        );
+                                      })()}
+                                    </div>
+                                  </div>
+                                  <div className="space-y-4">
+                                    <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                                      <div className="w-4 h-px bg-slate-200" />
+                                      Why it matters for tennis
+                                    </h5>
+                                    <ul className="space-y-3">
+                                      {(metricData.matters || "").split(". ").filter(s => s.trim().length > 0).map((s, i) => (
+                                        <li key={i} className="flex gap-3 items-start">
+                                          <div className="w-2 h-2 rounded-full bg-[#7BFF00]/40 mt-1.5 shrink-0" />
+                                          <p className="text-sm md:text-base font-bold text-slate-700 leading-snug italic">
+                                            {s}{s.endsWith('.') ? '' : '.'}
+                                          </p>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="grid gap-4 mt-2">
+                                  {subtitles.map((sub, i) => (
+                                    <div key={i} className="flex gap-4 items-start p-4 rounded-2xl bg-white/50 border border-slate-100 group/item">
+                                      <CheckCircle2 size={20} className={isGoodJump ? 'text-emerald-500' : 'text-[#7BFF00]'} />
+                                      <p className="text-sm md:text-base font-bold text-slate-700 leading-snug">
+                                        {sub}
+                                      </p>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </>
+                          )}
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -329,7 +491,17 @@ export default function App() {
                     {activeSubTab.id !== 'overview' && activeSubTab.id !== 'testing-warmup' && (
                       <span className="text-[10px] font-black tracking-[0.3em] text-blue-200 uppercase block mb-2">Inspect the results before uploading</span>
                     )}
-                    {Array.isArray(activeSubTab.scoring) ? (
+                    {typeof activeSubTab.scoring === 'string' && activeSubTab.scoring.startsWith('KEY TAKEAWAY') ? (
+                      <div className="flex flex-col gap-4 border-l-8 border-[#7BFF00] pl-6 py-2">
+                         <div className="flex items-center gap-2">
+                            <Lightbulb className="text-[#7BFF00]" size={24} />
+                            <span className="text-[10px] font-black tracking-[0.4em] text-[#7BFF00] uppercase">Performance Insight</span>
+                         </div>
+                         <span className="text-2xl md:text-3xl font-black italic uppercase leading-tight text-white">
+                           {activeSubTab.scoring.replace('KEY TAKEAWAY:', '').trim()}
+                         </span>
+                      </div>
+                    ) : Array.isArray(activeSubTab.scoring) ? (
                       <div className="flex flex-col gap-2">
                         <span className="text-xl md:text-2xl font-black italic uppercase leading-tight whitespace-pre-wrap">
                           {activeSubTab.scoring[0]}
