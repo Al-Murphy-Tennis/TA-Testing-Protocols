@@ -20,7 +20,11 @@ import {
   Download,
   Star,
   Target,
-  Lightbulb
+  Lightbulb,
+  ArrowDownCircle,
+  Ruler,
+  Gauge,
+  Clock
 } from 'lucide-react';
 import { PROTOCOLS, COLORS } from './constants';
 import { MajorTab, TestProtocol } from './types';
@@ -30,6 +34,272 @@ export default function App() {
   const [activeGroupId, setActiveGroupId] = useState(PROTOCOLS[0].groups[0].id);
   const [activeSubTabId, setActiveSubTabId] = useState(PROTOCOLS[0].groups[0].subTabs[0].id);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const [expandedCMJSections, setExpandedCMJSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const [expandedSJSections, setExpandedSJSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const [expandedRHTSections, setExpandedRHTSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const [expandedDJSections, setExpandedDJSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const [expandedIMTPSections, setExpandedIMTPSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const [expandedBeltSections, setExpandedBeltSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const [expandedAnkleSections, setExpandedAnkleSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const [expandedHipAddAbdSections, setExpandedHipAddAbdSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const [expandedHipFlexionSections, setExpandedHipFlexionSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const [expandedHipExtensionSections, setExpandedHipExtensionSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const [expandedShoulderRotSections, setExpandedShoulderRotSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const [expandedSpeedAccelSections, setExpandedSpeedAccelSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const [expandedCODSections, setExpandedCODSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const [expandedYoYoSections, setExpandedYoYoSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const [expandedVertecSections, setExpandedVertecSections] = useState({
+    primary: true,
+    secondary: false,
+    exploratory: false,
+  });
+
+  const getMetricIcon = (title: string) => {
+    const lower = title.toLowerCase();
+    if (lower.includes('rsi') || lower.includes('reactive strength')) return <Gauge className="text-emerald-500 shrink-0" size={24} />;
+    if (lower.includes('contact time')) return <Clock className="text-amber-500 shrink-0" size={24} />;
+    if (lower.includes('jump height')) return <Ruler className="text-emerald-500 shrink-0" size={24} />;
+    if (lower.includes('concentric force') || lower.includes('peak force')) return <Dumbbell className="text-amber-500 shrink-0" size={24} />;
+    if (lower.includes('con impulse')) return <Zap className="text-cyan-500 shrink-0" size={24} />;
+    if (lower.includes('velocity')) return <Gauge className="text-[#7BFF00] shrink-0" size={24} />;
+    if (lower.includes('depth')) return <Ruler className="text-blue-500 shrink-0 rotate-90" size={24} />;
+    if (lower.includes('landing force') || lower.includes('eccentric peak force') || lower.includes('eccentric force')) return <ArrowDownCircle className="text-orange-500 shrink-0" size={24} />;
+    if (lower.includes('power')) return <Gauge className="text-amber-500 shrink-0" size={24} />;
+    if (lower.includes('duration')) return <Clock className="text-blue-400 shrink-0" size={24} />;
+    if (lower.includes('asymmetry')) return <Target className="text-orange-500 shrink-0" size={24} />;
+    if (lower.includes('stiffness')) return <Activity className="text-pink-500 shrink-0" size={24} />;
+    return <Activity className="text-slate-400 shrink-0" size={24} />;
+  };
+
+  const renderStep = (step: any, idx: number) => {
+    const isInterpret = activeMajorTab.id === 'interpret';
+    const titleStr = typeof step !== 'string' ? step.title.toLowerCase() : '';
+    const isTennis = titleStr.includes('tennis');
+    const isGoodJump = titleStr.includes('good') || titleStr.includes('how to use');
+
+    // Parse structured metric data
+    const subtitles = typeof step !== 'string' ? (Array.isArray(step.subtitle) ? step.subtitle : [step.subtitle]) : [];
+    
+    const metricData = {
+      means: subtitles.find(s => s.startsWith('WHAT IT MEANS:'))?.replace('WHAT IT MEANS:', '').trim(),
+      matters: subtitles.find(s => s.startsWith('WHY IT MATTERS:'))?.replace('WHY IT MATTERS:', '').trim(),
+      attribute: subtitles.find(s => s.startsWith('STRENGTH ATTRIBUTE:'))?.replace('STRENGTH ATTRIBUTE:', '').trim(),
+      priority: subtitles.find(s => s.startsWith('PRIORITY:'))?.replace('PRIORITY:', '').trim(),
+    };
+
+    const isMetricRow = !!metricData.means || !!metricData.matters;
+    const isPrimary = metricData.priority === 'PRIMARY' || titleStr.includes('primary');
+    const isSecondary = metricData.priority === 'SECONDARY' || titleStr.includes('secondary');
+    const isExploratory = metricData.priority === 'EXPLORATORY' || titleStr.includes('exploratory');
+
+    const getStyles = () => {
+      if (isPrimary) return 'bg-white border-slate-200 shadow-sm';
+      if (isSecondary) return 'bg-slate-50/50 border-slate-200';
+      if (isExploratory) return 'bg-blue-50/20 border-blue-100';
+      if (isTennis) return 'bg-[#7BFF00]/5 border-[#7BFF00]/20';
+      if (isGoodJump) return 'bg-white border-2 border-emerald-500 shadow-xl shadow-emerald-500/10';
+      return 'bg-slate-50/50 border-slate-100';
+    };
+
+    return (
+      <div 
+        key={idx} 
+        className={`
+          group flex flex-col gap-4 pb-6 md:pb-8 last:border-0 p-6 md:p-8 rounded-[2rem] border transition-all duration-300 w-full
+          ${isInterpret ? getStyles() : 'border-transparent border-b-slate-100 rounded-none p-0 last:pb-0'}
+          ${(isGoodJump || isTennis || titleStr.includes('how to use') || titleStr.includes('interpret')) && 'md:max-w-4xl mx-auto w-full'}
+        `}
+      >
+        {!isInterpret && (
+          <div className="flex gap-6 items-start">
+            <span className="text-slate-220 font-serif italic text-4xl md:text-6xl leading-none group-hover:text-[#7BFF00] transition-all duration-300 transform group-hover:scale-110 shrink-0">
+              {String(idx + 1).padStart(2, '0')}
+            </span>
+            <div className="flex flex-col gap-2">
+              <p className="text-xl md:text-2xl font-black text-slate-900 leading-tight uppercase">
+                {typeof step === 'string' ? step : step.title}
+              </p>
+              {typeof step !== 'string' && step.subtitle && (
+                 <div className="flex flex-col gap-2">
+                   {Array.isArray(step.subtitle) ? step.subtitle.map((s, i) => (
+                     <div key={i} className="flex gap-3 items-start">
+                        <div className="w-2 h-2 rounded-full bg-[#7BFF00] mt-1.5" />
+                        <p className="text-sm text-slate-600 font-bold uppercase tracking-wider">{s}</p>
+                     </div>
+                   )) : (
+                     <div className="flex gap-3 items-start">
+                        <div className="w-2 h-2 rounded-full bg-[#7BFF00] mt-1.5" />
+                        <p className="text-sm text-slate-600 font-bold uppercase tracking-wider">{step.subtitle}</p>
+                     </div>
+                   )}
+                 </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {isInterpret && (
+          <>
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
+              <div className="flex items-center gap-4">
+                {isMetricRow && (
+                  <div className={`
+                    px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase
+                    ${isPrimary ? 'bg-black text-[#7BFF00]' : isExploratory ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'}
+                  `}>
+                    {metricData.priority}
+                  </div>
+                )}
+                <div className="flex items-center gap-3">
+                  {isMetricRow && getMetricIcon(typeof step === 'string' ? step : step.title)}
+                  <h4 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase">
+                    {typeof step === 'string' ? step : step.title}
+                  </h4>
+                </div>
+              </div>
+              {metricData.attribute && (
+                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 border border-blue-100">
+                  <Target size={16} className="text-blue-600" />
+                  <span className="text-[11px] font-black text-blue-600 uppercase tracking-wider">
+                     {metricData.attribute}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {isMetricRow ? (
+              <div className="grid md:grid-cols-2 gap-8 mt-4 pt-6 border-t border-slate-100">
+                <div className="space-y-4">
+                  <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <div className="w-4 h-px bg-slate-200" />
+                    What it means
+                  </h5>
+                  <div>
+                    {(() => {
+                      const sentences = (metricData.means || "").split(". ").filter(s => s.trim().length > 0);
+                      return (
+                        <div className="flex flex-col gap-3">
+                          <p className="text-sm md:text-base font-bold text-slate-900 leading-snug uppercase">
+                            {sentences[0]}{sentences[0].endsWith('.') ? '' : '.'}
+                          </p>
+                          {sentences.slice(1).map((s, i) => (
+                            <div key={i} className="flex gap-2 items-start pl-4 group/sub">
+                              <div className="w-1 h-1 rounded-full bg-slate-300 mt-2 group-hover/sub:bg-[#7BFF00] transition-colors" />
+                              <p className="text-xs md:text-sm font-bold text-slate-500 uppercase leading-normal tracking-wide">
+                                {s}{s.endsWith('.') ? '' : '.'}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <div className="w-4 h-px bg-slate-200" />
+                    Why it matters for tennis
+                  </h5>
+                  <ul className="space-y-3">
+                    {(metricData.matters || "").split(". ").filter(s => s.trim().length > 0).map((s, i) => (
+                      <li key={i} className="flex gap-3 items-start">
+                        <div className="w-2 h-2 rounded-full bg-[#7BFF00]/40 mt-1.5 shrink-0" />
+                        <p className="text-sm md:text-base font-bold text-slate-700 leading-snug italic">
+                          {s}{s.endsWith('.') ? '' : '.'}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ) : (
+              <div className="grid gap-4 mt-2">
+                {subtitles.map((sub, i) => (
+                  <div key={i} className="flex gap-4 items-start p-4 rounded-2xl bg-white/50 border border-slate-100 group/item">
+                    <CheckCircle2 size={20} className={isGoodJump ? 'text-emerald-500' : 'text-[#7BFF00]'} />
+                    <p className="text-sm md:text-base font-bold text-slate-700 leading-snug">
+                      {sub}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    );
+  };
 
   const handleDownload = (imageUrl: string, filename: string) => {
     const link = document.createElement('a');
@@ -232,161 +502,247 @@ export default function App() {
                     <div className="h-px bg-[#0070FF]/20 flex-1" />
                   </h3>
                   <div className={activeMajorTab.id === 'interpret' ? "flex flex-col gap-6" : "grid gap-6 md:gap-8"}>
-                    {activeSubTab.procedure.map((step, idx) => {
-                      const isInterpret = activeMajorTab.id === 'interpret';
-                      const titleStr = typeof step !== 'string' ? step.title.toLowerCase() : '';
-                      const isTennis = titleStr.includes('tennis');
-                      const isGoodJump = titleStr.includes('good') || titleStr.includes('how to use');
+                    {activeSubTab.id === 'cmj-metrics' || activeSubTab.id === 'sj-metrics' || activeSubTab.id === 'rht-metrics' || activeSubTab.id === 'dj-metrics' || activeSubTab.id === 'imtp-metrics' || activeSubTab.id === 'belt-metrics' || activeSubTab.id === 'ankle-push-metrics' || activeSubTab.id === 'hip-add-abd-metrics' || activeSubTab.id === 'hip-flexion-metrics' || activeSubTab.id === 'hip-extension-metrics' || activeSubTab.id === 'shoulder-rot-metrics' || activeSubTab.id === 'speed-accel-metrics' || activeSubTab.id === 'cod-metrics' || activeSubTab.id === 'yoyo-metrics' || activeSubTab.id === 'vertec-metrics' ? (
+                      (() => {
+                        const isCMJ = activeSubTab.id === 'cmj-metrics';
+                        const isSJ = activeSubTab.id === 'sj-metrics';
+                        const isRHT = activeSubTab.id === 'rht-metrics';
+                        const isDJ = activeSubTab.id === 'dj-metrics';
+                        const isIMTP = activeSubTab.id === 'imtp-metrics';
+                        const isBelt = activeSubTab.id === 'belt-metrics';
+                        const isAnkle = activeSubTab.id === 'ankle-push-metrics';
+                        const isHipAddAbd = activeSubTab.id === 'hip-add-abd-metrics';
+                        const isHipFlexion = activeSubTab.id === 'hip-flexion-metrics';
+                        const isHipExtension = activeSubTab.id === 'hip-extension-metrics';
+                        const isShoulderRot = activeSubTab.id === 'shoulder-rot-metrics';
+                        const isSpeedAccel = activeSubTab.id === 'speed-accel-metrics';
+                        const isCOD = activeSubTab.id === 'cod-metrics';
+                        const isYoYo = activeSubTab.id === 'yoyo-metrics';
+                        const isVertec = activeSubTab.id === 'vertec-metrics';
 
-                      // Parse structured metric data
-                      const subtitles = typeof step !== 'string' ? (Array.isArray(step.subtitle) ? step.subtitle : [step.subtitle]) : [];
-                      
-                      const metricData = {
-                        means: subtitles.find(s => s.startsWith('WHAT IT MEANS:'))?.replace('WHAT IT MEANS:', '').trim(),
-                        matters: subtitles.find(s => s.startsWith('WHY IT MATTERS:'))?.replace('WHY IT MATTERS:', '').trim(),
-                        attribute: subtitles.find(s => s.startsWith('STRENGTH ATTRIBUTE:'))?.replace('STRENGTH ATTRIBUTE:', '').trim(),
-                        priority: subtitles.find(s => s.startsWith('PRIORITY:'))?.replace('PRIORITY:', '').trim(),
-                      };
+                        const expandedSections = isCMJ 
+                          ? expandedCMJSections 
+                          : isSJ 
+                            ? expandedSJSections 
+                            : isRHT
+                              ? expandedRHTSections
+                              : isDJ
+                                ? expandedDJSections
+                                : isIMTP
+                                  ? expandedIMTPSections
+                                  : isBelt
+                                    ? expandedBeltSections
+                                    : isAnkle
+                                      ? expandedAnkleSections
+                                      : isHipAddAbd
+                                        ? expandedHipAddAbdSections
+                                        : isHipFlexion
+                                          ? expandedHipFlexionSections
+                                          : isHipExtension
+                                            ? expandedHipExtensionSections
+                                            : isShoulderRot
+                                              ? expandedShoulderRotSections
+                                              : isSpeedAccel
+                                                ? expandedSpeedAccelSections
+                                                : isCOD
+                                                  ? expandedCODSections
+                                                  : isYoYo
+                                                    ? expandedYoYoSections
+                                                    : expandedVertecSections;
 
-                      const isMetricRow = !!metricData.means || !!metricData.matters;
-                      const isPrimary = metricData.priority === 'PRIMARY' || titleStr.includes('primary');
-                      const isSecondary = metricData.priority === 'SECONDARY' || titleStr.includes('secondary');
-                      const isExploratory = metricData.priority === 'EXPLORATORY' || titleStr.includes('exploratory');
+                        const setExpandedSections = isCMJ 
+                          ? setExpandedCMJSections 
+                          : isSJ 
+                            ? setExpandedSJSections 
+                            : isRHT
+                              ? setExpandedRHTSections
+                              : isDJ
+                                ? setExpandedDJSections
+                                : isIMTP
+                                  ? setExpandedIMTPSections
+                                  : isBelt
+                                    ? setExpandedBeltSections
+                                    : isAnkle
+                                      ? setExpandedAnkleSections
+                                      : isHipAddAbd
+                                        ? setExpandedHipAddAbdSections
+                                        : isHipFlexion
+                                          ? setExpandedHipFlexionSections
+                                          : isHipExtension
+                                            ? setExpandedHipExtensionSections
+                                            : isShoulderRot
+                                              ? setExpandedShoulderRotSections
+                                              : isSpeedAccel
+                                                ? setExpandedSpeedAccelSections
+                                                : isCOD
+                                                  ? setExpandedCODSections
+                                                  : isYoYo
+                                                    ? setExpandedYoYoSections
+                                                    : setExpandedVertecSections;
 
-                      const getStyles = () => {
-                        if (isPrimary) return 'bg-white border-slate-200';
-                        if (isSecondary) return 'bg-slate-50 border-slate-200';
-                        if (isExploratory) return 'bg-blue-50/30 border-blue-100';
-                        if (isTennis) return 'bg-[#7BFF00]/5 border-[#7BFF00]/20';
-                        if (isGoodJump) return 'bg-white border-2 border-emerald-500 shadow-xl shadow-emerald-500/10';
-                        return 'bg-slate-50/50 border-slate-100';
-                      };
+                        const categories = {
+                          primary: [] as any[],
+                          secondary: [] as any[],
+                          exploratory: [] as any[],
+                          general: [] as any[],
+                        };
 
-                      return (
-                        <div 
-                          key={idx} 
-                          className={`
-                            group flex flex-col gap-4 pb-6 md:pb-8 last:border-0 p-6 md:p-8 rounded-[2rem] border transition-all duration-300
-                            ${isInterpret ? getStyles() : 'border-transparent border-b-slate-100 rounded-none p-0 last:pb-0'}
-                            ${(isGoodJump || isTennis) && 'md:max-w-4xl mx-auto w-full'}
-                          `}
-                        >
-                          {!isInterpret && (
-                            <div className="flex gap-6 items-start">
-                              <span className="text-slate-200 font-serif italic text-4xl md:text-6xl leading-none group-hover:text-[#7BFF00] transition-all duration-300 transform group-hover:scale-110 shrink-0">
-                                {String(idx + 1).padStart(2, '0')}
-                              </span>
-                              <div className="flex flex-col gap-2">
-                                <p className="text-xl md:text-2xl font-black text-slate-900 leading-tight uppercase">
-                                  {typeof step === 'string' ? step : step.title}
-                                </p>
-                                {typeof step !== 'string' && step.subtitle && (
-                                   <div className="flex flex-col gap-2">
-                                     {Array.isArray(step.subtitle) ? step.subtitle.map((s, i) => (
-                                       <div key={i} className="flex gap-3 items-start">
-                                          <div className="w-2 h-2 rounded-full bg-[#7BFF00] mt-1.5" />
-                                          <p className="text-sm text-slate-600 font-bold uppercase tracking-wider">{s}</p>
-                                       </div>
-                                     )) : (
-                                       <div className="flex gap-3 items-start">
-                                          <div className="w-2 h-2 rounded-full bg-[#7BFF00] mt-1.5" />
-                                          <p className="text-sm text-slate-600 font-bold uppercase tracking-wider">{step.subtitle}</p>
-                                       </div>
-                                     )}
-                                   </div>
-                                )}
-                              </div>
-                            </div>
-                          )}
+                        activeSubTab.procedure.forEach((step) => {
+                          const titleStr = typeof step !== 'string' ? step.title.toLowerCase() : '';
+                          const subtitles = typeof step !== 'string' ? (Array.isArray(step.subtitle) ? step.subtitle : [step.subtitle]) : [];
+                          const priority = subtitles.find(s => s.startsWith('PRIORITY:'))?.replace('PRIORITY:', '').trim() || '';
+                          
+                          const isPrimary = priority === 'PRIMARY' || titleStr.includes('primary');
+                          const isSecondary = priority === 'SECONDARY' || titleStr.includes('secondary');
+                          const isExploratory = priority === 'EXPLORATORY' || titleStr.includes('exploratory');
 
-                          {isInterpret && (
-                            <>
-                              <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
+                          if (isPrimary) {
+                            categories.primary.push(step);
+                          } else if (isSecondary) {
+                            categories.secondary.push(step);
+                          } else if (isExploratory) {
+                            categories.exploratory.push(step);
+                          } else {
+                            categories.general.push(step);
+                          }
+                        });
+
+                        return (
+                          <div className="flex flex-col gap-6 w-full">
+                            {/* Primary Section */}
+                            <div className="border border-slate-200/80 rounded-[2.5rem] bg-slate-50/20 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                              <button
+                                onClick={() => setExpandedSections(prev => ({ ...prev, primary: !prev.primary }))}
+                                className="w-full flex items-center justify-between p-6 md:p-8 bg-slate-900 hover:bg-black text-white text-left transition-colors focus:outline-none"
+                              >
                                 <div className="flex items-center gap-4">
-                                  {isMetricRow && (
-                                    <div className={`
-                                      px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase
-                                      ${isPrimary ? 'bg-black text-[#7BFF00]' : isExploratory ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'}
-                                    `}>
-                                      {metricData.priority}
-                                    </div>
-                                  )}
-                                  <h4 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase">
-                                    {typeof step === 'string' ? step : step.title}
-                                  </h4>
-                                </div>
-                                {metricData.attribute && (
-                                  <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 border border-blue-100">
-                                    <Target size={16} className="text-blue-600" />
-                                    <span className="text-[11px] font-black text-blue-600 uppercase tracking-wider">
-                                       {metricData.attribute}
-                                    </span>
+                                  <div className="w-4 h-12 bg-[#7BFF00] rounded-full shrink-0" />
+                                  <div>
+                                    <span className="text-[10px] font-black tracking-[0.2em] text-[#7BFF00] uppercase block mb-1">High Priority</span>
+                                    <h4 className="text-xl md:text-2xl font-black uppercase tracking-tight">Primary Metrics</h4>
                                   </div>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  <span className="text-xs font-bold text-slate-400 bg-white/10 px-3 py-1 rounded-full uppercase tracking-wider hidden sm:inline-block">
+                                    {categories.primary.length} Metrics
+                                  </span>
+                                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[#7BFF00] hover:bg-[#7BFF00]/25 transition-all">
+                                    <ChevronRight className={`transform transition-transform duration-300 ${expandedSections.primary ? 'rotate-90' : ''}`} size={20} />
+                                  </div>
+                                </div>
+                              </button>
+                              
+                              <AnimatePresence initial={false}>
+                                {expandedSections.primary && (
+                                  <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="overflow-hidden"
+                                  >
+                                    <div className="p-6 md:p-8 flex flex-col gap-6 bg-white/55 border-t border-slate-100">
+                                      {categories.primary.map((step, idx) => renderStep(step, idx))}
+                                    </div>
+                                  </motion.div>
                                 )}
-                              </div>
+                              </AnimatePresence>
+                            </div>
 
-                              {isMetricRow ? (
-                                <div className="grid md:grid-cols-2 gap-8 mt-4 pt-6 border-t border-slate-100">
-                                  <div className="space-y-4">
-                                    <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                                      <div className="w-4 h-px bg-slate-200" />
-                                      What it means
-                                    </h5>
-                                    <div>
-                                      {(() => {
-                                        const sentences = (metricData.means || "").split(". ").filter(s => s.trim().length > 0);
-                                        return (
-                                          <div className="flex flex-col gap-3">
-                                            <p className="text-sm md:text-base font-bold text-slate-900 leading-snug uppercase">
-                                              {sentences[0]}{sentences[0].endsWith('.') ? '' : '.'}
-                                            </p>
-                                            {sentences.slice(1).map((s, i) => (
-                                              <div key={i} className="flex gap-2 items-start pl-4 group/sub">
-                                                <div className="w-1 h-1 rounded-full bg-slate-300 mt-2 group-hover/sub:bg-[#7BFF00] transition-colors" />
-                                                <p className="text-xs md:text-sm font-bold text-slate-500 uppercase leading-normal tracking-wide">
-                                                  {s}{s.endsWith('.') ? '' : '.'}
-                                                </p>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        );
-                                      })()}
-                                    </div>
-                                  </div>
-                                  <div className="space-y-4">
-                                    <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                                      <div className="w-4 h-px bg-slate-200" />
-                                      Why it matters for tennis
-                                    </h5>
-                                    <ul className="space-y-3">
-                                      {(metricData.matters || "").split(". ").filter(s => s.trim().length > 0).map((s, i) => (
-                                        <li key={i} className="flex gap-3 items-start">
-                                          <div className="w-2 h-2 rounded-full bg-[#7BFF00]/40 mt-1.5 shrink-0" />
-                                          <p className="text-sm md:text-base font-bold text-slate-700 leading-snug italic">
-                                            {s}{s.endsWith('.') ? '' : '.'}
-                                          </p>
-                                        </li>
-                                      ))}
-                                    </ul>
+                            {/* Secondary Section */}
+                            <div className="border border-slate-200/80 rounded-[2.5rem] bg-slate-50/20 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                              <button
+                                onClick={() => setExpandedSections(prev => ({ ...prev, secondary: !prev.secondary }))}
+                                className="w-full flex items-center justify-between p-6 md:p-8 text-white text-left transition-colors focus:outline-none"
+                                style={{ backgroundColor: '#1E293B' }}
+                              >
+                                <div className="flex items-center gap-4">
+                                  <div className="w-4 h-12 bg-amber-500 rounded-full shrink-0" />
+                                  <div>
+                                    <span className="text-[10px] font-black tracking-[0.2em] text-amber-400 uppercase block mb-1">Medium Priority</span>
+                                    <h4 className="text-xl md:text-2xl font-black uppercase tracking-tight">Secondary Metrics</h4>
                                   </div>
                                 </div>
-                              ) : (
-                                <div className="grid gap-4 mt-2">
-                                  {subtitles.map((sub, i) => (
-                                    <div key={i} className="flex gap-4 items-start p-4 rounded-2xl bg-white/50 border border-slate-100 group/item">
-                                      <CheckCircle2 size={20} className={isGoodJump ? 'text-emerald-500' : 'text-[#7BFF00]'} />
-                                      <p className="text-sm md:text-base font-bold text-slate-700 leading-snug">
-                                        {sub}
-                                      </p>
-                                    </div>
-                                  ))}
+                                <div className="flex items-center gap-4">
+                                  <span className="text-xs font-bold text-slate-300 bg-white/10 px-3 py-1 rounded-full uppercase tracking-wider hidden sm:inline-block">
+                                    {categories.secondary.length} Metrics
+                                  </span>
+                                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-amber-400 hover:bg-amber-400/25 transition-all">
+                                    <ChevronRight className={`transform transition-transform duration-300 ${expandedSections.secondary ? 'rotate-90' : ''}`} size={20} />
+                                  </div>
                                 </div>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      );
-                    })}
+                              </button>
+                              
+                              <AnimatePresence initial={false}>
+                                {expandedSections.secondary && (
+                                  <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="overflow-hidden"
+                                  >
+                                    <div className="p-6 md:p-8 flex flex-col gap-6 bg-white/55 border-t border-slate-100">
+                                      {categories.secondary.map((step, idx) => renderStep(step, idx + 10))}
+                                    </div>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+
+                            {/* Exploratory Section */}
+                            <div className="border border-slate-200/80 rounded-[2.5rem] bg-slate-50/20 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                              <button
+                                onClick={() => setExpandedSections(prev => ({ ...prev, exploratory: !prev.exploratory }))}
+                                className="w-full flex items-center justify-between p-6 md:p-8 text-white text-left transition-colors focus:outline-none"
+                                style={{ backgroundColor: '#0F172A' }}
+                              >
+                                <div className="flex items-center gap-4">
+                                  <div className="w-4 h-12 bg-blue-500 rounded-full shrink-0" />
+                                  <div>
+                                    <span className="text-[10px] font-black tracking-[0.2em] text-blue-400 uppercase block mb-1">Alternative Analysis</span>
+                                    <h4 className="text-xl md:text-2xl font-black uppercase tracking-tight">Exploratory Metrics</h4>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  <span className="text-xs font-bold text-slate-300 bg-white/10 px-3 py-1 rounded-full uppercase tracking-wider hidden sm:inline-block">
+                                    {categories.exploratory.length} Metrics
+                                  </span>
+                                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-blue-400 hover:bg-blue-400/25 transition-all">
+                                    <ChevronRight className={`transform transition-transform duration-300 ${expandedSections.exploratory ? 'rotate-90' : ''}`} size={20} />
+                                  </div>
+                                </div>
+                              </button>
+                              
+                              <AnimatePresence initial={false}>
+                                {expandedSections.exploratory && (
+                                  <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="overflow-hidden"
+                                  >
+                                    <div className="p-6 md:p-8 flex flex-col gap-6 bg-white/55 border-t border-slate-100">
+                                      {categories.exploratory.map((step, idx) => renderStep(step, idx + 20))}
+                                    </div>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+
+                            {/* General / Summary Sections */}
+                            {categories.general.length > 0 && (
+                              <div className="flex flex-col gap-6 mt-8 border-t border-slate-100 pt-8">
+                                {categories.general.map((step, idx) => renderStep(step, idx + 30))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()
+                    ) : (
+                      activeSubTab.procedure.map((step, idx) => renderStep(step, idx))
+                    )}
                   </div>
                 </div>
               )}
